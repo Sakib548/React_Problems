@@ -1,0 +1,75 @@
+import { useState,useEffect,useContext,createContext } from "react";
+import { userData } from "../data";
+
+export const UserContext = createContext();
+
+
+
+export const UserProvider = ({children})=>{
+
+    const [data,setData] = useState(userData);
+
+   return (
+    <UserContext.Provider value={{data,setData}}>
+      {children}
+    </UserContext.Provider>
+   )
+
+}
+
+
+import { useContext, useState } from "react";
+import { UserContext } from "../context/userContext";
+
+const Search = ()=>{
+
+    const [search,setSearch] = useState("");
+
+    const {data,setData} = useContext(UserContext);
+    const [originalData, setOriginalData] = useState([...data]);
+
+    const handleChange = (e) => {
+        const input = e.target.value;
+        setSearch(input);
+        const newData = originalData.filter((item) =>
+          input.length === 0 ? true : item.role.includes(input)
+        );
+        setData(newData);
+      };
+
+
+    return <input type="text" value={search} onChange={handleChange}/>
+}
+
+export default Search;
+
+
+
+import { useContext, useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
+import Search from './components/Search'
+import { UserContext } from './context/userContext'
+
+function App() {
+  const {data} = useContext(UserContext);
+
+  console.log(data);
+
+
+  return (
+    <>
+    <Search/>
+      {
+        data.map((data,index)=>(
+          <h1 key={index}>{data.role}</h1>
+        ))
+      }
+    </>
+  )
+}
+
+export default App
+
